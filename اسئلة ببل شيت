@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار القانون الدولي الخاص</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .question-block {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .options-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .option-item {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .option-item:hover {
+            background: #eef2f7;
+            border-color: #3498db;
+        }
+        /* الألوان المطلوبة عند التصحيح */
+        .option-item.correct {
+            background-color: #d4edda !important;
+            border-color: #28a745 !important;
+            color: #155724 !important;
+            font-weight: bold;
+        }
+        .option-item.incorrect {
+            background-color: #f8d7da !important;
+            border-color: #dc3545 !important;
+            color: #721c24 !important;
+        }
+        .disabled {
+            pointer-events: none;
+        }
+        .result-section {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: #eef2f7;
+            border-radius: 8px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .btn-submit {
+            display: block;
+            width: 200px;
+            margin: 30px auto 0;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-submit:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <h1>اختبار في مادة القانون الدولي الخاص ⚖️</h1>
+    
+    <div id="quiz-questions">
+        </div>
+
+    <button class="btn-submit" onclick="calculateResult()">احسب النتيجة</button>
+    
+    <div class="result-section" id="result-box" style="display: none;">
+        النتيجة النهائية: <span id="score">0</span> من <span id="total">0</span>
+    </div>
+</div>
+
+<script>
+    // مصفوفة تحتوي على الأسئلة والخيارات والإجابة الصحيحة بناءً على ملفك
+    const quizData = [
+        {
+            id: 1,
+            question: "يُعرف القانون الدولي الخاص بأنه:",
+            options: [
+                "قانون ينظم العلاقات بين الدول",
+                "قانون ينظم العلاقات ذات الطابع الدولي بين الأفراد",
+                "قانون العقوبات الدولي",
+                "قانون المنظمات الدولية"
+            ],
+            correct: 1 // الخيار الثاني (ب) هو الصحيح
+        },
+        {
+            id: 2,
+            question: "متى بدأ ظهور القانون الدولي الخاص؟",
+            options: [
+                "القرن الخامس عشر",
+                "القرن السابع عشر",
+                "القرن التاسع عشر",
+                "القرن العشرين"
+            ],
+            correct: 2 // القرن التاسع عشر هو الصحيح
+        },
+        {
+            id: 3,
+            question: "أي مما يأتي لا يُعد من موضوعات القانون الدولي الخاص؟",
+            options: [
+                "الجنسية",
+                "مركز الأجانب",
+                "تنازع القوانين",
+                "المسؤولية الجنائية الدولية"
+            ],
+            correct: 3 // المسؤولية الجنائية الدولية
+        },
+        {
+            id: 4,
+            question: "المقصود بتنازع القوانين هو:",
+            options: [
+                "تعارض القوانين داخل الدولة الواحدة",
+                "تعارض قوانين دولتين أو أكثر على علاقة قانونية واحدة",
+                "تعارض الأحكام القضائية",
+                "تعارض القوانين مع النظام العام"
+            ],
+            correct: 1
+        },
+        {
+            id: 5,
+            question: "التجنس الاستثنائي يتم:",
+            options: [
+                "بطلب من الفرد حصراً",
+                "وفق شروط قانونية عامة",
+                "بقرار سيادي لمصلحة الدولة",
+                "بحكم قضائي"
+            ],
+            correct: 2 // ج - بقرار سيادي لمصلحة الدولة
+        },
+        {
+            id: 6,
+            question: "سحب الجنسية يختلف عن الإسقاط من حيث:",
+            options: [
+                "الجهة المختصة",
+                "الطبيعة القانونية",
+                "سبب الإجراء",
+                "جميع ما ذُكر"
+            ],
+            correct: 3 // د - جميع ما ذكر
+        }
+    ];
+
+    const quizContainer = document.getElementById('quiz-questions');
+
+    // دالة لعرض الأسئلة في الصفحة
+    function loadQuiz() {
+        quizContainer.innerHTML = "";
+        quizData.forEach((q, qIndex) => {
+            const questionBlock = document.createElement('div');
+            questionBlock.className = 'question-block';
+            
+            const questionText = document.createElement('div');
+            questionText.className = 'question-text';
+            questionText.innerText = `${q.id}- ${q.question}`;
+            questionBlock.appendChild(questionText);
+            
+            const optionsList = document.createElement('ul');
+            optionsList.className = 'options-list';
+            optionsList.setAttribute('id', `q-${qIndex}`);
+            
+            q.options.forEach((option, oIndex) => {
+                const optionItem = document.createElement('li');
+                optionItem.className = 'option-item';
+                optionItem.innerText = option;
+                // عند الضغط على الخيار يتم التحقق الفوري وتلوينه
+                optionItem.onclick = () => selectOption(qIndex, oIndex, optionItem);
+                optionsList.appendChild(optionItem);
+            });
+            
+            questionBlock.appendChild(optionsList);
+            quizContainer.appendChild(questionBlock);
+        });
+    }
+
+    // لتخزين إجابات المستخدم والنتائج
+    let userAnswers = new Array(quizData.length).fill(null);
+
+    // دالة اختيار الخيار وتلوينه الفوري
+    function selectOption(qIndex, oIndex, element) {
+        const optionsList = document.getElementById(`q-${qIndex}`);
+        const items = optionsList.getElementsByClassName('option-item');
+        
+        // منع الضغط المتكرر بعد الاختيار
+        if (userAnswers[qIndex] !== null) return;
+        
+        userAnswers[qIndex] = oIndex;
+        const correctAnswerIndex = quizData[qIndex].correct;
+
+        // تلوين كافة الخيارات بناءً على الصواب والخطأ
+        for (let i = 0; i < items.length; i++) {
+            items[i].classList.add('disabled'); // إيقاف إمكانية الضغط مجدداً
+            
+            if (i === correctAnswerIndex) {
+                // تلوين الإجابة الصحيحة بالأخضر دائماً ليراها المستخدم
+                items[i].classList.add('correct');
+            }
+            
+            if (i === oIndex && oIndex !== correctAnswerIndex) {
+                // إذا اختار المستخدم إجابة خاطئة تلون باللون الأحمر
+                items[i].classList.add('incorrect');
+            }
+        }
+    }
+
+    // دالة حساب وعرض النتيجة النهائية
+    function calculateResult() {
+        let score = 0;
+        quizData.forEach((q, index) => {
+            if (userAnswers[index] === q.correct) {
+                score++;
+            }
+        });
+
+        document.getElementById('score').innerText = score;
+        document.getElementById('total').innerText = quizData.length;
+        document.getElementById('result-box').style.display = 'block';
+        
+        // النزول لأسفل الصفحة لرؤية النتيجة
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    // تشغيل الاختبار فور تحميل الصفحة
+    loadQuiz();
+</script>
+
+</body>
+</html>
